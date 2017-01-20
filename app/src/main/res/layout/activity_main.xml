@@ -10,8 +10,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="uk.co.withad.symptomapp.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:orientation="vertical">
+
+        <Button
+            android:onClick="Flip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Flip"/>
+
+        <Button
+            android:onClick="DrawCircle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Circle"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/body_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/front"
+        android:visibility="visible"
+        android:adjustViewBounds="true"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:id="@+id/back_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/back"
+        android:visibility="invisible"/>
 </RelativeLayout>
