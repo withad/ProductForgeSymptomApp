@@ -21,11 +21,16 @@
             android:layout_height="wrap_content"
             android:text="Flip"/>
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+
         <Button
-            android:onClick="DrawCircle"
+            android:onClick="SetPain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Circle"/>
+            android:text="Pain"/>
 
     </LinearLayout>
 
@@ -36,7 +41,9 @@
         android:src="@drawable/front"
         android:visibility="visible"
         android:adjustViewBounds="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent" />
+
 
     <ImageView
         android:id="@+id/back_view"

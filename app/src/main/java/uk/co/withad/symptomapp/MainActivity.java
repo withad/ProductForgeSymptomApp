@@ -1,16 +1,21 @@
 package uk.co.withad.symptomapp;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.google.android.gms.appindexing.Action;
@@ -43,14 +48,49 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void DrawCircle(View v) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.id.body_view);
+    public void SetPain(View v) {
+        /*Dialog yourDialog = new Dialog(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.pain_slider, (ViewGroup)findViewById(R.id.pain_slider_root));
+        yourDialog.setContentView(layout);*/
+
+        //yourDialog.show();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.pain_slider);
+        // Add the buttons
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void drawTouchPoint(float x, float y) {
+        ImageView body_view = (ImageView)findViewById(R.id.body_view);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.front, options);
+
+        float scale_x = bitmap.getWidth() / body_view.getWidth();
+        float scale_y = bitmap.getHeight() / body_view.getHeight();
+
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
+        paint.setAlpha(50);
         paint.setColor(Color.RED);
-        canvas.drawCircle(100, 100, 10, paint);
+        canvas.drawCircle(x * scale_x, y * scale_y, 40, paint);
 
-        ImageView body_view = (ImageView)findViewById(R.id.body_view);
         body_view.setOnTouchListener(this);
         body_view.setImageBitmap(bitmap);
     }
@@ -65,6 +105,7 @@ public class MainActivity extends AppCompatActivity
             float y = event.getY();
             Log.d("SymptomApp", "X: " + event.getX() + ", Y: " + event.getY());
             Log.d("SymptomApp", "Location X: " + x/view_width + ", Location Y: " + y/view_height);
+            drawTouchPoint(x, y);
         }
 
         return true;

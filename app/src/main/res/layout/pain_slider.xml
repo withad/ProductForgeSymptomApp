@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/pain_slider_root"
+    android:weightSum="100">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:layout_weight="10"/>
+
+    <SeekBar
+        android:id="@+id/pain_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:max="9"
+        android:layout_weight="80"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:gravity="right"
+        android:layout_weight="10"/>
+
+</LinearLayout>
