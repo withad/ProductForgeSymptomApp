@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity
         options.inMutable = true;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), currentImage, options);
 
-        float scale_x = bitmap.getWidth() / body_view.getWidth();
-        float scale_y = bitmap.getHeight() / body_view.getHeight();
+        float scale_x = bitmap.getWidth() / (float)body_view.getWidth();
+        float scale_y = bitmap.getHeight() / (float)body_view.getHeight();
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
