@@ -7,29 +7,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnTouchListener {
 
-    private boolean showingFront = true;
+    private boolean submitEnabled = false;
     private int currentImage = R.drawable.front;
 
     @Override
@@ -41,17 +32,23 @@ public class MainActivity extends AppCompatActivity
         body_view.setOnTouchListener(this);
     }
 
-    public void Flip(View v) {
+    public void flipBody(View v) {
         if (currentImage == R.drawable.front) {
             currentImage = R.drawable.back;
         } else {
             currentImage = R.drawable.front;
         }
 
-        UpdateImage();
+        ImageView body_view = (ImageView)findViewById(R.id.body_view);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), currentImage, options);
+
+        body_view.setImageBitmap(bitmap);
     }
 
-    public void SetPain(View v) {
+    public void setPain(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.pain_slider);
 
@@ -90,27 +87,23 @@ public class MainActivity extends AppCompatActivity
         body_view.setImageBitmap(bitmap);
     }
 
-    private void UpdateImage() {
-        ImageView body_view = (ImageView)findViewById(R.id.body_view);
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), currentImage, options);
-
-        body_view.setImageBitmap(bitmap);
-    }
-
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         int view_width = view.getWidth();
         int view_height = view.getHeight();
+        int action = event.getAction();
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
             float x = event.getX();
             float y = event.getY();
-            Log.d("SymptomApp", "X: " + event.getX() + ", Y: " + event.getY());
-            Log.d("SymptomApp", "Location X: " + x/view_width + ", Location Y: " + y/view_height);
+            //Log.d("SymptomApp", "X: " + event.getX() + ", Y: " + event.getY());
+            //Log.d("SymptomApp", "Location X: " + x/view_width + ", Location Y: " + y/view_height);
             drawTouchPoint(x, y);
+
+            if (!submitEnabled) {
+                ((Button)findViewById(R.id.set_pain_button)).setEnabled(true);
+                submitEnabled = true;
+            }
         }
 
         return true;

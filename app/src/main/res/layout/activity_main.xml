@@ -10,23 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="uk.co.withad.symptomapp.MainActivity">
 
-    <LinearLayout
+    <Button
+        android:onClick="flipBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:onClick="Flip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Flip"/>
-
-        <Button
-            android:onClick="SetPain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pain"/>
-    </LinearLayout>
+        android:text="Flip"/>
 
     <ImageView
         android:id="@+id/body_view"
@@ -38,10 +26,13 @@
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent" />
 
-    <ImageView
-        android:id="@+id/back_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/back"
-        android:visibility="invisible"/>
+    <Button
+        android:id="@+id/set_pain_button"
+        android:onClick="setPain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pain"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:enabled="false"/>
 </RelativeLayout>
