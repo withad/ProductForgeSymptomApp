@@ -17,14 +17,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import static android.R.attr.id;
+
 public class MainActivity extends AppCompatActivity
-        implements  View.OnTouchListener {
+        implements View.OnTouchListener {
+
+    private boolean showingFront = true;
+    private int currentImage = R.drawable.front;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,41 +42,31 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void Flip(View v) {
-        ImageView front = (ImageView) findViewById(R.id.body_view);
-        ImageView back = (ImageView) findViewById(R.id.back_view);
-
-        if (front.getVisibility() == View.VISIBLE) {
-            back.setVisibility(View.VISIBLE);
-            front.setVisibility(View.INVISIBLE);
+        if (currentImage == R.drawable.front) {
+            currentImage = R.drawable.back;
         } else {
-            back.setVisibility(View.INVISIBLE);
-            front.setVisibility(View.VISIBLE);
+            currentImage = R.drawable.front;
         }
+
+        UpdateImage();
     }
 
     public void SetPain(View v) {
-        /*Dialog yourDialog = new Dialog(this);
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.pain_slider, (ViewGroup)findViewById(R.id.pain_slider_root));
-        yourDialog.setContentView(layout);*/
-
-        //yourDialog.show();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.pain_slider);
-        // Add the buttons
+
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
+                SeekBar pain_slider = (SeekBar)((Dialog)dialog).findViewById(R.id.pain_seekbar);
+                int result = pain_slider.getProgress() + 1;
+                Log.d("SymptomApp", Integer.toString(result));
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
             }
         });
 
-        // Create the AlertDialog
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -80,7 +76,7 @@ public class MainActivity extends AppCompatActivity
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.front, options);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), currentImage, options);
 
         float scale_x = bitmap.getWidth() / body_view.getWidth();
         float scale_y = bitmap.getHeight() / body_view.getHeight();
@@ -91,7 +87,16 @@ public class MainActivity extends AppCompatActivity
         paint.setColor(Color.RED);
         canvas.drawCircle(x * scale_x, y * scale_y, 40, paint);
 
-        body_view.setOnTouchListener(this);
+        body_view.setImageBitmap(bitmap);
+    }
+
+    private void UpdateImage() {
+        ImageView body_view = (ImageView)findViewById(R.id.body_view);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), currentImage, options);
+
         body_view.setImageBitmap(bitmap);
     }
 
