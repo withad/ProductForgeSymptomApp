@@ -26,28 +26,13 @@
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:rotation="90"
-            android:max="10"
-            android:progress="5"
-            android:layout_alignParentRight="true" />
-
-        <Button
-            android:id="@+id/set_pain_button"
-            android:onClick="setPain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pain"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:enabled="false"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/set_pain_button"
+        android:onClick="setPain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pain"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:enabled="false"/>
 </RelativeLayout>
