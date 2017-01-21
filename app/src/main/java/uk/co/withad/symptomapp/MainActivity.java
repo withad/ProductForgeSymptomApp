@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnTouchListener {
@@ -74,6 +73,13 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
 
+    public void testButton(View v) {
+        currentPain = 1;
+        if (currentPoint != null) {
+            storeCurrentData();
+        }
+    }
+
     private void storeCurrentData() {
         // Do the actual data storage here...
         float viewHeight = bodyView.getHeight();
@@ -82,45 +88,25 @@ public class MainActivity extends AppCompatActivity
         float scaledX = currentPoint.x/viewWidth;
         float scaledY = currentPoint.y/viewHeight;
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;
-        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.mask_human_figure_back_1, options);
-        Point maskPoint = new Point((int)(mask.getWidth() * scaledX), (int)(mask.getHeight() * scaledY));
-        int pixelValue = mask.getPixel(maskPoint.x, maskPoint.y);
-
-        ArrayList<Integer> hits = new ArrayList<Integer>();
+        ArrayList<Integer> hits = new ArrayList<>();
         boolean viewingFront = currentImage == R.drawable.front;
         String[] maps = new String[2];
 
+        String mask_human_figure = "mask_human_figure_";
+        String front = "front_";
+        String back = "back_";
+
         if (viewingFront) {
-            maps[0] = "mask_human_figure_figure_front_"; //60
-            maps[1] = "mask_human_figure_front_cortical_parc_"; //45
-
-            for (int i = 1; i <= 60; i++) {
-
-            }
+            hits.addAll(checkMapForHits(mask_human_figure + front, 60, scaledX, scaledY));
+            hits.addAll(checkMapForHits(mask_human_figure + front + "cortical_parc_", 45, scaledX, scaledY));
+        } else {
+            hits.addAll(checkMapForHits(mask_human_figure+back, 58, scaledX, scaledY));
+            hits.addAll(checkMapForHits(mask_human_figure+back+"cortical_", 34, scaledX, scaledY));
         }
 
-        // Check the back masks
-        String backPrefix = "mask_human_figure_back_";
-        for (int i = 1; i <= 58; i++) {
-            int image_resource = getResources().getIdentifier(backPrefix + i, "drawable", getApplicationContext().getPackageName());
-            mask = BitmapFactory.decodeResource(getResources(), image_resource, options);
-            maskPoint = new Point((int)(mask.getWidth() * scaledX), (int)(mask.getHeight() * scaledY));
-            pixelValue = mask.getPixel(maskPoint.x, maskPoint.y);
-
-            if (pixelValue == -1) {
-                backHit = i;
-                break;
-            }
-        }
-
-        //Log.d("SymptomApp", "X: " + event.getX() + ", Y: " + event.getY());
-        //Log.d("SymptomApp", "Location X: " + x/view_width + ", Location Y: " + y/view_height);
-
-        Log.d("SymptomApp", "Pain " + currentPain + " at " + currentPoint.toString() + ", scaled (" + scaledX + "), (" + scaledY + ")");
-        Log.d("SymptomApp", "Pixel value: " + pixelValue);
-        Log.d("SystemApp", "Hit in back map " + backHit);
+        //Log.d("SymptomApp", "Pain " + currentPain + " at " + currentPoint.toString() + ", scaled (" + scaledX + "), (" + scaledY + ")");
+        Log.d("SymptomApp", "Hits: " + hits.toString());
+        Log.d("SymptomApp", "Hits as CSV " + generateCSVLine(hits));
 
         // TODO: Erase current point after setting?
         //currentPoint = null;
@@ -134,21 +120,63 @@ public class MainActivity extends AppCompatActivity
         options.inScaled = false;
         Bitmap mask;
         Point maskPoint;
-        int pixelValue;
+        ArrayList<Integer> pixelValues = new ArrayList<>();
         ArrayList<Integer> hits = new ArrayList<Integer>();
+
+        boolean hadAHit = false;
 
         for (int i = 1; i <= noOfMasks; i++) {
             int image_resource = getResources().getIdentifier(maskPrefix + i, "drawable", getApplicationContext().getPackageName());
             mask = BitmapFactory.decodeResource(getResources(), image_resource, options);
             maskPoint = new Point((int)(mask.getWidth() * xScale), (int)(mask.getHeight() * yScale));
-            pixelValue = mask.getPixel(maskPoint.x, maskPoint.y);
 
-            if (pixelValue == -1) {
+            pixelValues.clear();
+            for (Point p : surroundingPoints(maskPoint)) {
+                pixelValues.add(mask.getPixel(p.x, p.y));
+            }
+
+            if (pixelValues.contains(-1)) {
                 hits.add(i);
+                hadAHit = true;
+            } else {
+                hits.add(0);
             }
         }
 
+        if (!hadAHit) {
+            Log.d("SymptomApp", "No hits in " + maskPrefix);
+        }
+
         return hits;
+    }
+
+    private ArrayList<Point> surroundingPoints(Point centre) {
+        ArrayList<Point> points = new ArrayList<>();
+        points.add(new Point(centre.x - 1,  centre.y - 1));
+        points.add(new Point(centre.x,      centre.y - 1));
+        points.add(new Point(centre.x + 1,  centre.y - 1));
+        points.add(new Point(centre.x - 1,  centre.y));
+        points.add(centre);
+        points.add(new Point(centre.x + 1,  centre.y));
+        points.add(new Point(centre.x - 1,  centre.y + 1));
+        points.add(new Point(centre.x,      centre.y + 1));
+        points.add(new Point(centre.x + 1,  centre.y + 1));
+
+        return points;
+    }
+
+    private String generateCSVLine(ArrayList<Integer> hitsList) {
+        String csv = new String();
+
+        for (Integer i : hitsList) {
+            if (i != 0) {
+                csv += 1;
+            }
+
+            csv += ","; //TODO: Might be adding an extra comma at the end
+        }
+
+        return csv;
     }
 
     private void updateImage() {
