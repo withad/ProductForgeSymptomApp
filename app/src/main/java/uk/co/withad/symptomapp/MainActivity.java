@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -96,23 +98,44 @@ public class MainActivity extends AppCompatActivity
         String front = "front_";
         String back = "back_";
 
+        String csv;
+
         if (viewingFront) {
             hits.addAll(checkMapForHits(mask_human_figure + front, 60, scaledX, scaledY));
             hits.addAll(checkMapForHits(mask_human_figure + front + "cortical_parc_", 45, scaledX, scaledY));
+            csv = generateCSVLine(hits) + padCommas(58 + 34);
         } else {
             hits.addAll(checkMapForHits(mask_human_figure+back, 58, scaledX, scaledY));
             hits.addAll(checkMapForHits(mask_human_figure+back+"cortical_", 34, scaledX, scaledY));
+            csv = padCommas(60 + 45) + generateCSVLine(hits);
         }
 
         //Log.d("SymptomApp", "Pain " + currentPain + " at " + currentPoint.toString() + ", scaled (" + scaledX + "), (" + scaledY + ")");
         Log.d("SymptomApp", "Hits: " + hits.toString());
-        Log.d("SymptomApp", "Hits as CSV " + generateCSVLine(hits));
+        Log.d("SymptomApp", "Hits as CSV " + csv);
+
+        File file = new File(getFilesDir(), "pain_data.csv");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(csv.getBytes());
+            fileOutputStream.close();
+        } catch (Exception e) {
+            Log.d("SystemApp", "Failed to write file.");
+        }
 
         // TODO: Erase current point after setting?
-        //currentPoint = null;
+        currentPoint = null;
         updateImage();
 
         setPainButton.setEnabled(false);
+    }
+
+    private String padCommas(int n) {
+        String commas = new String();
+        for (int i = 0; i < n; i++) {
+            commas += ",";
+        }
+        return commas;
     }
 
     private ArrayList<Integer> checkMapForHits(String maskPrefix, int noOfMasks, float xScale, float yScale) {
@@ -136,7 +159,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (pixelValues.contains(-1)) {
-                hits.add(i);
+                hits.add(currentPain);
                 hadAHit = true;
             } else {
                 hits.add(0);
@@ -170,7 +193,7 @@ public class MainActivity extends AppCompatActivity
 
         for (Integer i : hitsList) {
             if (i != 0) {
-                csv += 1;
+                csv += i;
             }
 
             csv += ","; //TODO: Might be adding an extra comma at the end
