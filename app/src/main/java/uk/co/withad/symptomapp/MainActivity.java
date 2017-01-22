@@ -110,13 +110,15 @@ public class MainActivity extends AppCompatActivity
             csv = padCommas(60 + 45) + generateCSVLine(hits);
         }
 
+        csv += "\n";
+
         //Log.d("SymptomApp", "Pain " + currentPain + " at " + currentPoint.toString() + ", scaled (" + scaledX + "), (" + scaledY + ")");
         Log.d("SymptomApp", "Hits: " + hits.toString());
         Log.d("SymptomApp", "Hits as CSV " + csv);
 
         File file = new File(getFilesDir(), "pain_data.csv");
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
             fileOutputStream.write(csv.getBytes());
             fileOutputStream.close();
         } catch (Exception e) {
